@@ -1,38 +1,32 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : BasePlayerController
 {
-    public static PlayerController instance;
+    public static new PlayerController instance;
 
-    public SpriteRenderer spriteRenderer;
-    public float moveSpeed;
-    public Animator anim;
-    public float pickupRange = 1.5f;
-
-    public List<Weapon> unassignedWeapons = new List<Weapon>();
-    public List<Weapon> assignedWeapons = new List<Weapon>();
-    public int maxWeapons = 3;
-
-    [HideInInspector] public List<Weapon> fullyLevelledWeapons = new List<Weapon>();
     [HideInInspector] private List<GameObject> activeOverlays = new List<GameObject>();
 
-    private void Awake()
+    // Backwards-compatible accessors for code referencing PlayerController.instance.assignedWeapons
+    public new List<Weapon> assignedWeapons { get { if (base.assignedWeapons == null) base.assignedWeapons = new List<Weapon>(); return base.assignedWeapons; } }
+    public new List<Weapon> unassignedWeapons { get { if (base.unassignedWeapons == null) base.unassignedWeapons = new List<Weapon>(); return base.unassignedWeapons; } }
+    public new List<Weapon> fullyLevelledWeapons { get { if (base.fullyLevelledWeapons == null) base.fullyLevelledWeapons = new List<Weapon>(); return base.fullyLevelledWeapons; } }
+
+    protected override void Awake()
     {
+        base.Awake();
         instance = this;
+
+        // Initialize base lists directly to avoid assigning to the read-only forwarding properties.
+        if (base.assignedWeapons == null) base.assignedWeapons = new List<Weapon>();
+        if (base.unassignedWeapons == null) base.unassignedWeapons = new List<Weapon>();
+        if (base.fullyLevelledWeapons == null) base.fullyLevelledWeapons = new List<Weapon>();
     }
 
-    private void Start()
+    protected override void Start()
     {
+        base.Start();
         CacheComponents();
-
-        if (assignedWeapons == null) assignedWeapons = new List<Weapon>();
-        if (unassignedWeapons == null) unassignedWeapons = new List<Weapon>();
-
-        if (assignedWeapons.Count == 0 && unassignedWeapons.Count > 0)
-        {
-            AddWeapon(Random.Range(0, unassignedWeapons.Count));
-        }
 
         if (PlayerStatController.instance != null)
         {
@@ -106,7 +100,6 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        if (instance == null) return;
         CacheComponents();
 
         Vector3 moveInput = new Vector3(
@@ -126,7 +119,7 @@ public class PlayerController : MonoBehaviour
     }
 
     // -----------------------------------------------------------------------
-    // ApplyClass — primary keeps all weapons; secondary MERGES weapons in
+    // ApplyClass — primary keeps visuals; secondary merges weapons
     // -----------------------------------------------------------------------
 
     public void ApplyClass(ClassData classData)
@@ -261,7 +254,7 @@ public class PlayerController : MonoBehaviour
     public bool HasWeapon(Weapon weapon)
         => weapon != null && (assignedWeapons.Contains(weapon) || fullyLevelledWeapons.Contains(weapon));
 
-    public void AddWeapon(int weaponNumber)
+    public override void AddWeapon(int weaponNumber)
     {
         if (weaponNumber < 0 || weaponNumber >= unassignedWeapons.Count) return;
 
@@ -276,7 +269,7 @@ public class PlayerController : MonoBehaviour
             UIController.instance.UpdateActiveClassDisplay();
     }
 
-    public void AddWeapon(Weapon weaponToAdd)
+    public override void AddWeapon(Weapon weaponToAdd)
     {
         if (weaponToAdd == null || HasWeapon(weaponToAdd)) return;
 

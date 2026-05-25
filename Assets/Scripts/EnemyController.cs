@@ -4,24 +4,142 @@ using UnityEngine;
 
 public class EnemyController : MonoBehaviour
 {
-    public Rigidbody2D theRB; // The rigidbody component. AK
-    public float moveSpeed; // The speed at which the enemy moves. AK
-    private Transform target; // The target that the enemy will follow. AK
-    public float damage; // The damage that the enemy deals. AK
-    public float hitWaitTime = 1f; // The time to wait before the enemy can hit the player again. AK
-    private float hitCounter; // The counter for the hit wait time. AK
-    public float health = 5f; // The health of the enemy. AK
-    public float knockBackTime = .5f; // The time to knock back the enemy. AK
-    private float knockBackCounter; // The counter for the knock back time. AK
-    public int expToGive = 1; // The experience to give when the enemy is destroyed. GK
-    public float expMultiplier = 1f; // Multiplier for experience dropped by this enemy. GK
-    public int coinValue = 1; // The value of the coin. D
-    public float coinDropRate = 0.5f; // The rate at which the coin drops. D
+	[Header("Core")]
+	public Rigidbody2D theRB;
+	public float moveSpeed = 2f;
+	private Transform target;
 
-    [Header("Sprite Settings")]
-    // Khai báo biến kiểm tra hướng mặt mặc định của quái
-    public bool faceLeftByDefault = false; 
+	[Header("Combat")]
+	public float damage = 1f;
+	public float hitWaitTime = 1f;
+	private float hitCounter;
 
+	[Header("Health")]
+	public float health = 5f;
+
+	[Header("Knockback")]
+	public float knockBackTime = 0.5f;
+	private float knockBackCounter;
+
+	[Header("Drop")]
+	public int expToGive = 1;
+	public float expMultiplier = 1f;
+	public int coinValue = 1;
+	public float coinDropRate = 0.5f;
+
+	[Header("Sprite Settings")]
+	public bool faceLeftByDefault = false;
+
+	private Vector2 moveDirection;
+
+	private void Awake()
+	{
+		theRB = GetComponent<Rigidbody2D>();
+		// default target: player health controller if available
+		if (PlayerHealthController.instance != null)
+			target = PlayerHealthController.instance.transform;
+	}
+
+	void FixedUpdate()
+	{
+		if (moveSpeed <= 0f) return;
+
+		// ensure player controller exists; target validity checked below
+		if (PlayerController.instance == null)
+		{
+			theRB.velocity = Vector2.zero;
+			return;
+		}
+
+		if (target == null || !target.gameObject.activeSelf)
+		{
+			theRB.velocity = Vector2.zero;
+			return;
+		}
+
+		// knockback handling
+		if (knockBackCounter > 0f)
+		{
+			knockBackCounter -= Time.fixedDeltaTime;
+			theRB.velocity = -moveDirection * moveSpeed * 2f;
+			return;
+		}
+
+		// movement towards target
+		moveDirection = (target.position - transform.position).normalized;
+		theRB.velocity = moveDirection * moveSpeed;
+
+		// flip sprite based on relative position
+		Vector3 newScale = transform.localScale;
+		float baseScaleX = Mathf.Abs(newScale.x);
+		if (target.position.x > transform.position.x)
+			newScale.x = baseScaleX * (faceLeftByDefault ? -1f : 1f);
+		else if (target.position.x < transform.position.x)
+			newScale.x = baseScaleX * (faceLeftByDefault ? 1f : -1f);
+		transform.localScale = newScale;
+
+		// hit cooldown
+		if (hitCounter > 0f) hitCounter -= Time.fixedDeltaTime;
+	}
+
+	private void OnCollisionEnter2D(Collision2D collision)
+	{
+		if (collision.gameObject.CompareTag("Player") && hitCounter <= 0f)
+		{
+			if (PlayerHealthController.instance != null)
+				PlayerHealthController.instance.TakeDamage(damage);
+
+			hitCounter = hitWaitTime;
+		}
+	}
+
+	public void TakeDamage(float damageToTake)
+	{
+		health -= damageToTake;
+
+		if (health <= 0f)
+		{
+			Die();
+			return;
+		}
+
+		if (SFXManager.instance != null)
+			SFXManager.instance.PlaySFXPitched(1);
+
+		if (DamageNumberController.instance != null)
+			DamageNumberController.instance.SpawnDamage(damageToTake, transform.position);
+	}
+
+	public void TakeDamage(float damageToTake, bool shouldKnockBack)
+	{
+		TakeDamage(damageToTake);
+		if (shouldKnockBack)
+		{
+			knockBackCounter = knockBackTime;
+		}
+	}
+
+	private void Die()
+	{
+		// spawn exp and coin, play VFX/SFX, then destroy
+		int expAmount = Mathf.Max(1, Mathf.RoundToInt(expToGive * expMultiplier));
+		if (ExperienceLevelController.instance != null)
+			ExperienceLevelController.instance.SpawnExp(transform.position, expAmount);
+
+		if (Random.value <= coinDropRate && CoinController.instance != null)
+			CoinController.instance.DropCoin(transform.position, coinValue);
+
+		if (SFXManager.instance != null)
+			SFXManager.instance.PlaySFXPitched(0);
+
+		Destroy(gameObject);
+	}
+
+	public void SetTarget(GameObject newTarget)
+	{
+		if (newTarget == null) { target = null; return; }
+		target = newTarget.transform;
+	}
     void Start()
     {
         //target = FindObjectOfType<PlayerController>().transform; // Find the player and set it as the target. AK
@@ -79,47 +197,5 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D collision) // When the enemy collides with something. AK
-    {
-        if (collision.gameObject.tag == "Player" && hitCounter <= 0f) // If the enemy collides with the player. AK
-        {
-            PlayerHealthController.instance.TakeDamage(damage); // Take 10 damage. AK
-
-            hitCounter = hitWaitTime; // Set the hit counter to the hit wait time. AK
-        }
-    }
-
-    public void TakeDamage(float damageToTake) // Function to take damage. AK
-    {
-        health -= damageToTake; // Decrease the health by the damage. AK
-
-        if (health <= 0) // If the health is less than or equal to 0. AK
-        {
-            Destroy(gameObject); // Destroy the enemy. AK
-            int expAmount = Mathf.Max(1, Mathf.RoundToInt(expToGive * expMultiplier));
-            ExperienceLevelController.instance.SpawnExp(transform.position, expAmount); // Set the experience when the enemy is destroyed. GK
-            if (Random.value <= coinDropRate) // If the random value is less than or equal to the coin drop rate. D
-            {
-                CoinController.instance.DropCoin(transform.position, coinValue); // Drop the coin. D
-            }
-
-            SFXManager.instance.PlaySFXPitched(0); // Play the sound effect. D
-        }
-        else
-        {
-            SFXManager.instance.PlaySFXPitched(1); // Play the sound effect. D
-        }
-
-        DamageNumberController.instance.SpawnDamage(damageToTake, transform.position); // Spawn the damage number. AK
-    }
-
-    public void TakeDamage(float damageToTake, bool shouldKnockBack) // Function to take damage. AK
-    {
-        TakeDamage(damageToTake); // Take damage. AK
-
-        if (shouldKnockBack == true) // If the enemy should be knocked back. AK
-        {
-            knockBackCounter = knockBackTime; // Set the knock back counter to the knock back time. AK
-        }
-    }
+    
 }
