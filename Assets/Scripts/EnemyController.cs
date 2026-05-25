@@ -25,13 +25,15 @@ public class EnemyController : MonoBehaviour
     void Start()
     {
         //target = FindObjectOfType<PlayerController>().transform; // Find the player and set it as the target. AK
-        target = PlayerHealthController.instance.transform; // Find the player and set it as the target. AK
+        if (PlayerHealthController.instance != null)
+            target = PlayerHealthController.instance.transform; // Find the player and set it as the target. AK
     }
 
     void Update()
     {
-        if (moveSpeed <= 0) return;
-        if (PlayerController.instance.gameObject.activeSelf == true) // If the player is not active. GK
+        if (moveSpeed <= 0 || theRB == null || target == null) return;
+
+        if (PlayerController.instance != null && PlayerController.instance.gameObject.activeSelf == true) // If the player is not active. GK
         {
             if (knockBackCounter > 0) // If the knock back counter is greater than 0. AK
             {
@@ -72,7 +74,8 @@ public class EnemyController : MonoBehaviour
         }
         else
         {
-            theRB.velocity = Vector2.zero; // Set the velocity to 0. GK
+            if (theRB != null)
+                theRB.velocity = Vector2.zero; // Set the velocity to 0. GK
         }
     }
 
