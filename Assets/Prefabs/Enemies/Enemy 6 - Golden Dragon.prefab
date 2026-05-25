@@ -108,8 +108,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sprite: {fileID: 2600073887558118393}
-  speed: 0.5
-  minSize: 0.9
+  speed: 0.787
+  minSize: 0.85
   maxSize: 1.1
 --- !u!1 &2600073887558118392
 GameObject:
