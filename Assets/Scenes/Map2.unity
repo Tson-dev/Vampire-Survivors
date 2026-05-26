@@ -903,11 +903,14 @@ MonoBehaviour:
   weaponLevel: 0
   statsUpdated: 0
   icon: {fileID: -196789849, guid: 99f10abcf979e904b883da0c6922d74f, type: 3}
+  ownerClass: {fileID: 0}
+  weaponPrefab: {fileID: 0}
   rotateSpeed: 180
   holder: {fileID: 40023706}
   fireballToSpawn: {fileID: 303937135}
   timeBetweenSpawn: 4
   damager: {fileID: 2010390211}
+  fireballPrefab: {fileID: 0}
 --- !u!1 &90368187
 GameObject:
   m_ObjectHideFlags: 0
@@ -1249,6 +1252,10 @@ MonoBehaviour:
   - {fileID: 372908036}
   - {fileID: 662286380}
   levelUpPanel: {fileID: 551205162}
+  levelUpPanelTitleText: {fileID: 0}
+  promotionPanel: {fileID: 0}
+  promotionButtons: []
+  promotionPanelTitleText: {fileID: 0}
   coinText: {fileID: 1350992751}
   levelEndScreen: {fileID: 1087754265}
   endTimeText: {fileID: 822282665}
@@ -1259,6 +1266,7 @@ MonoBehaviour:
   timeText: {fileID: 35559802}
   mainMenuName: Main Menu
   pauseScreen: {fileID: 1895146670}
+  activeClassText: {fileID: 0}
 --- !u!114 &115697853
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6827,6 +6835,8 @@ MonoBehaviour:
   weaponLevel: 0
   statsUpdated: 0
   icon: {fileID: -1061488230, guid: 99f10abcf979e904b883da0c6922d74f, type: 3}
+  ownerClass: {fileID: 0}
+  weaponPrefab: {fileID: 0}
   damager: {fileID: 1319264202}
 --- !u!4 &288920809
 Transform:
@@ -7441,12 +7451,15 @@ MonoBehaviour:
   weaponLevel: 0
   statsUpdated: 0
   icon: {fileID: -1283994490, guid: 99f10abcf979e904b883da0c6922d74f, type: 3}
+  ownerClass: {fileID: 0}
+  weaponPrefab: {fileID: 0}
   damager: {fileID: 945770212}
   projectile: {fileID: 945770211}
   weaponRange: 5
   whatIsEnemy:
     serializedVersion: 2
     m_Bits: 64
+  sfxIndex: 4
 --- !u!1 &358573699
 GameObject:
   m_ObjectHideFlags: 0
@@ -7890,9 +7903,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8235e31a98fccd649b96236b5bde9952, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  upgradeDescText: {fileID: 2091413703}
-  nameLevelText: {fileID: 588070986}
-  weaponIcon: {fileID: 1575323524}
 --- !u!1 &378009737
 GameObject:
   m_ObjectHideFlags: 0
@@ -13698,12 +13708,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 574105870}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8235e31a98fccd649b96236b5bde9952, type: 3}
+  m_Script: {fileID: 0}
   m_Name: 
   m_EditorClassIdentifier: 
-  upgradeDescText: {fileID: 1472594930}
-  nameLevelText: {fileID: 289743810}
-  weaponIcon: {fileID: 785662089}
 --- !u!1 &586367007
 GameObject:
   m_ObjectHideFlags: 0
@@ -14378,9 +14385,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8235e31a98fccd649b96236b5bde9952, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  upgradeDescText: {fileID: 93015604}
-  nameLevelText: {fileID: 1137158718}
-  weaponIcon: {fileID: 789233041}
 --- !u!1 &695268234
 GameObject:
   m_ObjectHideFlags: 0
@@ -15830,11 +15834,14 @@ MonoBehaviour:
   weaponLevel: 0
   statsUpdated: 0
   icon: {fileID: -196789849, guid: 99f10abcf979e904b883da0c6922d74f, type: 3}
+  ownerClass: {fileID: 0}
+  weaponPrefab: {fileID: 0}
   rotateSpeed: 180
   holder: {fileID: 358573700}
   fireballToSpawn: {fileID: 1556081830}
   timeBetweenSpawn: 4
   damager: {fileID: 1316162903}
+  fireballPrefab: {fileID: 0}
 --- !u!1 &843250406
 GameObject:
   m_ObjectHideFlags: 0
@@ -17407,6 +17414,8 @@ MonoBehaviour:
   weaponLevel: 0
   statsUpdated: 0
   icon: {fileID: 906671935, guid: 99f10abcf979e904b883da0c6922d74f, type: 3}
+  ownerClass: {fileID: 0}
+  weaponPrefab: {fileID: 0}
   damager: {fileID: 1493077035}
 --- !u!1 &1126129600
 GameObject:
@@ -18576,7 +18585,11 @@ MonoBehaviour:
   weaponLevel: 0
   statsUpdated: 0
   icon: {fileID: 21300000, guid: 0c78c8dd7f0745146b5b5c4fad8288e4, type: 3}
+  ownerClass: {fileID: 0}
+  weaponPrefab: {fileID: 0}
   damager: {fileID: 800369218}
+  animationFrames: []
+  damageRadiusMultiplier: 0.5
 --- !u!1 &1248612389
 GameObject:
   m_ObjectHideFlags: 0
@@ -31364,11 +31377,14 @@ MonoBehaviour:
   weaponLevel: 0
   statsUpdated: 0
   icon: {fileID: -196789849, guid: 99f10abcf979e904b883da0c6922d74f, type: 3}
+  ownerClass: {fileID: 0}
+  weaponPrefab: {fileID: 0}
   rotateSpeed: 180
   holder: {fileID: 855176303}
   fireballToSpawn: {fileID: 272641019}
   timeBetweenSpawn: 4
   damager: {fileID: 853477103}
+  fireballPrefab: {fileID: 0}
 --- !u!1 &1720199000
 GameObject:
   m_ObjectHideFlags: 0
@@ -31533,15 +31549,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 158575d0868133b459e1c436eb5e5b89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  width: 100
-  height: 100
-  roadCount: 10
+  width: 200
+  height: 200
+  roadCount: 8
   centralAreaPercent: 0.01
-  obstacleDensity: 0.4
+  obstacleDensity: 0.05
   houseChance: 0.2
   rockChance: 0.5
-  spawnerCount: 20
-  seed: 12345
+  spawnerCount: 30
+  seed: 5324
   renderner: {fileID: 244434266}
   playerSpawnBootstrap: {fileID: 1160871118}
   obstacleSpawner: {fileID: 1171639843}
@@ -31784,11 +31800,14 @@ MonoBehaviour:
   weaponLevel: 0
   statsUpdated: 0
   icon: {fileID: -196789849, guid: 99f10abcf979e904b883da0c6922d74f, type: 3}
+  ownerClass: {fileID: 0}
+  weaponPrefab: {fileID: 0}
   rotateSpeed: 180
   holder: {fileID: 138880551}
   fireballToSpawn: {fileID: 1445002770}
   timeBetweenSpawn: 4
   damager: {fileID: 1982050930}
+  fireballPrefab: {fileID: 0}
 --- !u!1 &1739872805
 GameObject:
   m_ObjectHideFlags: 0
@@ -33720,7 +33739,6 @@ MonoBehaviour:
   expLevels: 0000000005000000080000000b0000000f0000001300000018000000
   currentLevel: 1
   levelCount: 100
-  weaponsToUpgrade: []
 --- !u!4 &2048091495
 Transform:
   m_ObjectHideFlags: 0
@@ -33949,11 +33967,14 @@ MonoBehaviour:
   weaponLevel: 0
   statsUpdated: 0
   icon: {fileID: -196789849, guid: 99f10abcf979e904b883da0c6922d74f, type: 3}
+  ownerClass: {fileID: 0}
+  weaponPrefab: {fileID: 0}
   rotateSpeed: 180
   holder: {fileID: 1688446564}
   fireballToSpawn: {fileID: 90368188}
   timeBetweenSpawn: 4
   damager: {fileID: 1593413439}
+  fireballPrefab: {fileID: 0}
 --- !u!1 &2085609747
 GameObject:
   m_ObjectHideFlags: 0

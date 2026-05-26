@@ -7,7 +7,9 @@ public class EnemyController : MonoBehaviour
 	[Header("Core")]
 	public Rigidbody2D theRB;
 	public float moveSpeed = 2f;
-	private Transform target;
+	private GameObject target;
+	private Transform targetTranform;
+	private SpriteRenderer spriteRenderer;
 
 	[Header("Combat")]
 	public float damage = 1f;
@@ -35,23 +37,16 @@ public class EnemyController : MonoBehaviour
 	private void Awake()
 	{
 		theRB = GetComponent<Rigidbody2D>();
-		// default target: player health controller if available
-		if (PlayerHealthController.instance != null)
-			target = PlayerHealthController.instance.transform;
+		targetTranform = target.transform;
+		if (spriteRenderer == null)
+			spriteRenderer = GetComponentInChildren<SpriteRenderer>();
 	}
 
 	void FixedUpdate()
 	{
 		if (moveSpeed <= 0f) return;
 
-		// ensure player controller exists; target validity checked below
-		if (PlayerController.instance == null)
-		{
-			theRB.velocity = Vector2.zero;
-			return;
-		}
-
-		if (target == null || !target.gameObject.activeSelf)
+		if (target == null || !target.activeSelf)
 		{
 			theRB.velocity = Vector2.zero;
 			return;
@@ -66,17 +61,11 @@ public class EnemyController : MonoBehaviour
 		}
 
 		// movement towards target
-		moveDirection = (target.position - transform.position).normalized;
+		moveDirection = (targetTranform.position - transform.position).normalized;
 		theRB.velocity = moveDirection * moveSpeed;
 
 		// flip sprite based on relative position
-		Vector3 newScale = transform.localScale;
-		float baseScaleX = Mathf.Abs(newScale.x);
-		if (target.position.x > transform.position.x)
-			newScale.x = baseScaleX * (faceLeftByDefault ? -1f : 1f);
-		else if (target.position.x < transform.position.x)
-			newScale.x = baseScaleX * (faceLeftByDefault ? 1f : -1f);
-		transform.localScale = newScale;
+		spriteRenderer.flipX = targetTranform.position.x < transform.position.x;
 
 		// hit cooldown
 		if (hitCounter > 0f) hitCounter -= Time.fixedDeltaTime;
@@ -134,17 +123,9 @@ public class EnemyController : MonoBehaviour
 
 		Destroy(gameObject);
 	}
-
-	public void SetTarget(GameObject newTarget)
-	{
-		if (newTarget == null) { target = null; return; }
-		target = newTarget.transform;
-	}
     void Start()
     {
-        //target = FindObjectOfType<PlayerController>().transform; // Find the player and set it as the target. AK
-        if (PlayerHealthController.instance != null)
-            target = PlayerHealthController.instance.transform; // Find the player and set it as the target. AK
+        
     }
 
     void Update()
@@ -168,34 +149,40 @@ public class EnemyController : MonoBehaviour
                 }
             }
 
-            theRB.velocity = (target.position - transform.position).normalized * moveSpeed; // Move the enemy towards the target. AK
+            theRB.velocity = (targetTranform.position - transform.position).normalized * moveSpeed; // Move the enemy towards the target. AK
 
             // --- ĐOẠN CODE TỰ ĐỘNG LẬT MẶT QUÁI ---
             Vector3 newScale = transform.localScale; 
             float baseScaleX = Mathf.Abs(newScale.x);
 
-            if (target.position.x > transform.position.x) // Nếu nhân vật đứng ở bên PHẢI quái
+            if (targetTranform.position.x > transform.position.x) // Nếu nhân vật đứng ở bên PHẢI quái
             {
                 newScale.x = baseScaleX * (faceLeftByDefault ? -1f : 1f); 
             }
-            else if (target.position.x < transform.position.x) // Nếu nhân vật đứng ở bên TRÁI quái
+            else if (targetTranform.position.x < transform.position.x) // Nếu nhân vật đứng ở bên TRÁI quái
             {
                 newScale.x = baseScaleX * (faceLeftByDefault ? 1f : -1f); 
             }
             transform.localScale = newScale; 
-            // ----------------------------------------
 
-            if (hitCounter > 0) // If the hit counter is greater than 0. AK
+            if (hitCounter > 0)
             {
-                hitCounter -= Time.deltaTime; // Decrease the hit counter. AK
+                hitCounter -= Time.deltaTime;
             }
         }
         else
         {
             if (theRB != null)
-                theRB.velocity = Vector2.zero; // Set the velocity to 0. GK
+                theRB.velocity = Vector2.zero;
         }
     }
 
-    
+	public void SetTarget(GameObject newTarget)
+    {
+		if (newTarget != null)
+		{
+			this.target = newTarget;
+			this.targetTranform = target.transform;
+		}
+    }
 }
