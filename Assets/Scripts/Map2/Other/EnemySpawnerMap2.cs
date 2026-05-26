@@ -15,7 +15,8 @@ public class EnemySpawnerMap2 : MonoBehaviour
     public List<WaveInfo> waves;
 
     private readonly List<GameObject> spawnedEnemies = new();
-    private Transform target;
+    [SerializeField] private GameObject target;
+    private Transform targetTranform;
 
     private float spawnCounter;
     private float waveCounter;
@@ -25,7 +26,7 @@ public class EnemySpawnerMap2 : MonoBehaviour
 
     private void Start()
     {
-        target = PlayerHealthController.instance.transform;
+        targetTranform = target.transform;
 
         currentWave = -1;
 
@@ -34,7 +35,7 @@ public class EnemySpawnerMap2 : MonoBehaviour
 
     private void Update()
     {
-        if (!PlayerHealthController.instance.gameObject.activeSelf)
+        if (!target.activeSelf)
             return;
 
         UpdateWave();
@@ -56,6 +57,7 @@ public class EnemySpawnerMap2 : MonoBehaviour
         if (spawnCounter <= 0)
         {
             spawnCounter = waves[currentWave].timeBetweenSpawns;
+            
             SpawnEnemy();
         }
     }
@@ -70,7 +72,12 @@ public class EnemySpawnerMap2 : MonoBehaviour
             spawnPos,
             Quaternion.identity
         );
-
+        // Set the new enemy to target the player
+        EnemyController enemy = newEnemy.GetComponent<EnemyController>();
+        if (enemy != null)
+        {
+            enemy.SetTarget(target);
+        }
         spawnedEnemies.Add(newEnemy);
     }
 
@@ -80,7 +87,7 @@ public class EnemySpawnerMap2 : MonoBehaviour
         {
             Vector3 point = SpawnPoint.Instance.GetRandomSpawnPoint();
 
-            float dist = Vector3.Distance(target.position, point);
+            float dist = Vector3.Distance(targetTranform.position, point);
 
             if (dist < minDistanceFromPlayer)
                 continue;
@@ -115,7 +122,7 @@ public class EnemySpawnerMap2 : MonoBehaviour
             }
 
             float dist = Vector3.Distance(
-                target.position,
+                targetTranform.position,
                 enemy.transform.position
             );
 

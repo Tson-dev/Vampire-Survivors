@@ -8,7 +8,7 @@ public class EnemySpawner : MonoBehaviour
     public float timeToSpawn; // The rate at which the enemies spawn. AK
     private float spawnCounter; // The counter for the spawn time. AK
     public Transform minSpawn, maxSpawn; // The minimum and maximum spawn positions. AK
-    private Transform target; // The target that the enemy will follow. AK
+    [SerializeField] private GameObject target; // The target that the enemy will follow. AK
     private float despawnDistance; // The distance at which the enemy will despawn. AK
     private List<GameObject> spawnedEnemies = new List<GameObject>(); // The list of spawned enemies. AK
     public int checkPerFrame; // The number of enemies to check per frame. AK
@@ -20,8 +20,6 @@ public class EnemySpawner : MonoBehaviour
     void Start()
     {
         //spawnCounter = timeToSpawn; // Set the spawn counter to the spawn time. AK
-
-        target = PlayerHealthController.instance.transform; // Find the player and set it as the target. AK
 
         despawnDistance = Vector3.Distance(transform.position, maxSpawn.position) + 4f; // Set the despawn distance to the distance between the spawner and the maximum spawn position plus 4. AK
 
@@ -43,7 +41,7 @@ public class EnemySpawner : MonoBehaviour
         //     spawnedEnemies.Add(newEnemy); // Add the new enemy to the list of spawned enemies. AK
         // }
 
-        if(PlayerHealthController.instance.gameObject.activeSelf) // If the player is active. AK
+        if(target.activeSelf) // If the player is active. AK
         {
             if(currentWave < waves.Count) // If the current wave is less than the number of waves. AK
             {
@@ -58,13 +56,20 @@ public class EnemySpawner : MonoBehaviour
                     spawnCounter = waves[currentWave].timeBetweenSpawns; // Reset the spawn counter. AK
 
                     GameObject newEnemy = Instantiate(waves[currentWave].enemyToSpawn, SelectSpawnPoint(), Quaternion.identity); // Spawn the enemy at the selected spawn point and Quaternion. AK
+                    // Set the new enemy to target the player
+                    EnemyController enemy = newEnemy.GetComponent<EnemyController>();
+
+                    if (enemy != null)
+                    {
+                        enemy.SetTarget(target);
+                    }
 
                     spawnedEnemies.Add(newEnemy); // Add the new enemy to the list of spawned enemies. AK
                 }
             }
         }
 
-        transform.position = target.position; // Move the spawner to the player's position. AK
+        transform.position = target.transform.position; // Move the spawner to the player's position. AK
 
         int checkTarget = enemyToCheck + checkPerFrame; // Set the check target to the enemy to check plus the check per frame. AK
 

@@ -19,11 +19,18 @@ public class PlayerHealthController : MonoBehaviour
 
     void Start()
     {
-        maxHealth = PlayerStatController.instance.health[0].value; // Set the max health to the health value. GK
+        if (PlayerStatController.instance != null && PlayerStatController.instance.health != null && PlayerStatController.instance.health.Count > 0)
+            maxHealth = PlayerStatController.instance.health[0].value; // Set the max health to the health value. GK
+        else
+            maxHealth = 1f;
+
         currentHealth = maxHealth; // Set the current health to the max health at the start of the game. AK
 
-        healthSlider.maxValue = maxHealth; // Set the max value of the health slider to the max health. AK
-        healthSlider.value = currentHealth; // Set the value of the health slider to the current health.AK
+        if (healthSlider != null)
+        {
+            healthSlider.maxValue = maxHealth; // Set the max value of the health slider to the max health. AK
+            healthSlider.value = currentHealth; // Set the value of the health slider to the current health.AK
+        }
     }
 
     void Update()
@@ -47,6 +54,7 @@ public class PlayerHealthController : MonoBehaviour
             SFXManager.instance.PlaySFX(3); // Play the sound effect. GK
         }
 
-        healthSlider.value = currentHealth; // Set the value of the health slider to the current health. AK
+        if (healthSlider != null)
+            healthSlider.value = currentHealth; // Set the value of the health slider to the current health. AK
     }
 }

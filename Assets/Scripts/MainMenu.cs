@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class MainMenu : MonoBehaviour
 {
-    public string firstLevelName; // The first level name.
+    public string firstLevelName;
 
     [Tooltip("Optional title text to display 'Class Survival'.")]
     public TMP_Text gameTitleText;
@@ -37,7 +37,11 @@ public class MainMenu : MonoBehaviour
     public void OpenCredit()
     {
         Debug.Log("Open Credit");
-        CallChangeBGM("PlayCredit");
+
+        // FIX: gọi thẳng — không cần Reflection vì cùng project
+        if (ChangeBGM.Instance != null)
+            ChangeBGM.Instance.PlayCredit();
+
         if (creditPanel != null) creditPanel.SetActive(true);
         SetButtonActive(false);
     }
@@ -45,58 +49,18 @@ public class MainMenu : MonoBehaviour
     public void CloseCredit()
     {
         Debug.Log("Close Credit");
-        CallChangeBGM("PlayMainMenu");
+
+        if (ChangeBGM.Instance != null)
+            ChangeBGM.Instance.PlayMainMenu();
+
         if (creditPanel != null) creditPanel.SetActive(false);
         SetButtonActive(true);
     }
 
-    private void CallChangeBGM(string methodName)
+    private void SetButtonActive(bool active)
     {
-        // Try to locate the ChangeBGM type across loaded assemblies
-        System.Type bgmType = System.Type.GetType("ChangeBGM");
-        if (bgmType == null)
-        {
-            foreach (var asm in System.AppDomain.CurrentDomain.GetAssemblies())
-            {
-                bgmType = asm.GetType("ChangeBGM");
-                if (bgmType != null) break;
-            }
-        }
-
-        if (bgmType != null)
-        {
-            var instanceProp = bgmType.GetProperty("Instance", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
-            if (instanceProp != null)
-            {
-                var instance = instanceProp.GetValue(null);
-                if (instance != null)
-                {
-                    var method = bgmType.GetMethod(methodName, System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
-                    if (method != null)
-                    {
-                        try { method.Invoke(instance, null); return; }
-                        catch { /* ignore invocation errors */ }
-                    }
-                }
-            }
-        }
-
-        // Fallback: runtime SendMessage search by component name (no compile-time dependency)
-        foreach (var mb in FindObjectsOfType<MonoBehaviour>())
-        {
-            if (mb == null) continue;
-            if (mb.GetType().Name == "ChangeBGM")
-            {
-                mb.SendMessage(methodName, SendMessageOptions.DontRequireReceiver);
-                return;
-            }
-        }
-    }
-
-    private void SetButtonActive(bool status)
-    {
-        if (startButton != null) startButton.GetComponent<Button>().interactable = status;
-        if (quitButton != null) quitButton.GetComponent<Button>().interactable = status;
-        if (creditButton != null) creditButton.GetComponent<Button>().interactable = status;
+        if (startButton  != null) startButton.GetComponent<Button>().interactable  = active;
+        if (quitButton   != null) quitButton.GetComponent<Button>().interactable   = active;
+        if (creditButton != null) creditButton.GetComponent<Button>().interactable = active;
     }
 }

@@ -46,21 +46,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   stats:
   - speed: 0
-    damage: 40
+    damage: 60
     range: 2
     timeBetweenAttacks: 2.5
     amount: 3
     duration: 0
     upgradeText: 'SlashV2 '
   - speed: 0
-    damage: 50
+    damage: 80
     range: 4
     timeBetweenAttacks: 2
     amount: 5
     duration: 0
     upgradeText: SlashV2 2
   - speed: 0
-    damage: 60
+    damage: 120
     range: 3
     timeBetweenAttacks: 1.5
     amount: 7
